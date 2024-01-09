@@ -93,7 +93,7 @@ void compute_sub_signal(pair<int,int> interval, vector<int> orig_tvec, vector<st
     for(int i=0;i<orig_tvec.size();i++){
         int l = interval.first;
         int u = interval.second;
-        if((i-2>0) && (i+1)<orig_tvec.size() && (orig_tvec[i+1]>=l) && (orig_tvec[i-2]<=u)){
+        if((orig_tvec[i]>=l) && (orig_tvec[i]<=u)){
             new_tvec.push_back(orig_tvec[i]);
             new_fvec.push_back(orig_fvec[i]);
         }
@@ -249,6 +249,14 @@ vector<pair<zone<int>,double>> param_porv_to_zone(vector<int> timeVec, vector<st
     res.insert(res.end(), subRes2.begin(), subRes2.end());
 
     return res;
+}
+
+
+void print_mag_param_match_set(vector<shared_ptr<gen_zone>> &civ){
+    cout<<"size:"<<civ.size()<<endl;
+    for(int i=0; i<civ.size(); i++){
+        cout<<*(dynamic_pointer_cast<zone_parambox<int,double>>(civ[i]))<<endl;
+    }
 }
 
 #endif // HELPER_MPTRE_HPP

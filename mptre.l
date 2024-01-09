@@ -28,6 +28,7 @@ p[0-9]+        {
 [ \t\r\n]+     { ; }
 
 "^+"    {return K_PLUS;}
+"-"		{return T_MINUS;}
 "<="    {yylval.ival=1; return LEQ;}
 "<"     {yylval.ival=2; return LE;}
 ">="    {yylval.ival=3; return GEQ;}
