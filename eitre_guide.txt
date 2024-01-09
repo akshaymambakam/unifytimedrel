@@ -1,0 +1,17 @@
+This file is guide for the grammar and usage of EITRE tool.
+In the data file (.csv) containing the timed word we have time stamps in the first column and events in the second.
+In the formula file with the extension ".ptre" first specify bounds on parameters.
+Next. Specify the formula.
+Events are named "y0", "y1", ..., "yN" in both data and formula file.
+Parameters are named "p0", "p1", ..., "pN".
+
+Grammar:
+Let "f" be a formula.
+Epsilon is expressed as "EPS". (EPS)
+Conjunction as "&". (f & f)
+Disjunction as "|". (f | f)
+Concatenation as "%". (f % f)
+Kleene plus as "^+". (f^+)
+Duration restriction with lower bound "l" and upper bound "f" as [l f]. (f [l f])
+Duration bounds are either integers or parameters.
+

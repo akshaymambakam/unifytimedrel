@@ -1,0 +1,36 @@
+This file is guide for the grammar and usage of MPTRE tool.
+In the data file (.csv) containing the signal we have time stamps in the first column.
+The second column contains signal "x0", third "x1", fourth "x3" and so on.
+In the formula file with the extension ".ptre" first specify bounds on parameters.
+Next. Specify the formula.
+Signals are named "x0", "x1", ..., "xN" in both data and formula file.
+Parameters are named "p0", "p1", ..., "pN".
+
+Grammar:
+Let "f" be a formula.
+Let "x" be a signal.
+Let "c" be a real-valued constant. This constant should compulsarily have a point (".") and digits on both sides of the point.
+Example: "10.0" is correct. "10" or "10." or ".01" are all wrong.
+Let "p" be a parameter.
+
+Bounds on parameters are expressed as a list as follows:
+c<=p0<=c
+c<=p1<=c
+...
+c<=pN<=c
+
+Epsilon is expressed as "EPS". (EPS)
+"x0", "x1", ..., "xN" are treated as propositional variables if and only if they contain only Boolean values.
+Atomic predicates over real-variables are (x >= c), (x <= c), (x >= - c), (x <= - c).
+And (x >= p), (x <= p), (x >= - p), (x <= - p).
+Atomic predicates with Boolean values switching from "False" to "True" (rise "+@") or "True" to "False" (fall "-@") are expressed using "+@" and "-@" respectively as follows.
+(+@ x >= c), (+@ x <= c), (+@ x >= - c), (+@ x <= - c).
+(-@ x >= c), (-@ x <= c), (-@ x >= - c), (-@ x <= - c).
+(+@ x >= p), (+@ x <= p), (+@ x >= - p), (+@ x <= - p).
+(-@ x >= p), (-@ x <= p), (-@ x >= - p), (-@ x <= - p).
+Conjunction as "&". (f & f)
+Disjunction as "|". (f | f)
+Concatenation as "%". (f % f)
+Kleene plus as "^+". (f^+)
+Duration restriction with lower bound "l" and upper bound "f" as [l f]. (f [l f])
+Duration bounds are always integer constants.

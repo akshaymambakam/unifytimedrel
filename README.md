@@ -37,6 +37,23 @@ The EITRE tool implements efficient PTPM and Parametric Identification for Param
 ```
 In the above command: 'eloop.ptre' contains the PTRE, 'testBlowup.csv' the timed word, the third argument is the number of parameters, and labels for positive and negative examples are provided in 'pos_labels.txt' and 'neg_labels.txt' respectively.
 
+A more detailed user guide for the tool can be found in:
+```
+eitre_guide.txt
+```
+
+## Using the MPTRE tool
+The MPTRE tool implements efficient PTPM and Parametric Identification for Parametric Timed Regular Expressions that allow magnitude parameters but no timing parameters that deal with real-valued signals. You can run MPTRE on an example we gave using the following command:
+```
+./mptre paramecg.ptre debugTest.csv 3 pos_ecg.txt neg_ecg.txt
+```
+In the above command: 'paramecg.ptre' contains the PTRE, 'debugTest.csv' the signal, the third argument is the number of parameters, and labels for positive and negative examples are provided in 'pos_ecg.txt' and 'neg_ecg.txt' respectively.
+
+A more detailed user guide for the tool can be found in:
+```
+mptre_guide.txt
+```
+
 ## Authors and acknowledgment
 This tool builds on the work that was done at the VERIMAG laboratory located in the Grenoble city of France. This work is built on top of the theory of Timed Pattern Matching (TPM) developed by [Dogan Ulus](https://www.cmpe.boun.edu.tr/tr/people/dogan.ulus). Check out his [github page](https://github.com/doganulus). Timed Pattern Matching has been implemented in [montre](https://github.com/doganulus/montre) and [timedrel](https://github.com/doganulus/timedrel).
 
