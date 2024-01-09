@@ -280,6 +280,46 @@ porv: X_STRING compop magconst {
 
             mptre_stack.push_back(zp_res);
       }
+      | X_STRING compop T_MINUS P_STRING {
+            vector<string> fvec = value_vec[$1];
+            vector<pair<zone<int>, double>> zd_res;
+            vector<shared_ptr<gen_zone>> zp_res;
+
+            if(label_intervals.size()==1){
+                vector<int> ntv;
+                vector<string> nfv;
+                compute_sub_signal(label_intervals[0], time_vec, fvec, ntv, nfv);
+                zd_res = param_porv_to_zone(ntv, nfv, 0, ntv.size()-2, $2);
+            }else{
+                zd_res = param_porv_to_zone(time_vec, fvec, 0, time_vec.size()-2, $2);
+            }
+
+            for(int i=0; i<zd_res.size(); i++){
+                parambox<double> pbtemp = parambox_global;
+                int mxflag = $2;
+
+                double neg_zd_res_elem_second = - zd_res[i].second;
+
+                if(mxflag == 3){
+                    pbtemp = parambox<double>::add_lower_bound_on_parameter(pbtemp,
+                        neg_zd_res_elem_second, 1, $4);
+                }else if(mxflag == 1){
+                    pbtemp = parambox<double>::add_upper_bound_on_parameter(pbtemp,
+                        neg_zd_res_elem_second, 1, $4);
+                }else{
+                    // TODO: "<" and ">" not yet added.
+                    cout<<"Comparison operator not yet supported!"<<endl;
+                    exit(0);
+                }
+
+                zp_res.push_back(make_shared<zone_parambox<int,double>>(zd_res[i].first,
+                    pbtemp));
+            }
+
+            std::sort(zp_res.begin(), zp_res.end(), paramtimedrel::earlier_bmin());
+
+            mptre_stack.push_back(zp_res);
+      }
       | edgeop X_STRING compop P_STRING {
             vector<string> fvec = value_vec[$1];
             vector<shared_ptr<gen_zone>> zp_res;
@@ -344,6 +384,79 @@ porv: X_STRING compop magconst {
                     zp_res.push_back(make_shared<zone_parambox<int,double>>(ztemp,
                         pbtemp));
                 }  
+
+                prev_fv = current_fv;
+            }
+
+            mptre_stack.push_back(zp_res);
+      }
+      | edgeop X_STRING compop T_MINUS P_STRING {
+            vector<string> fvec = value_vec[$1];
+            vector<shared_ptr<gen_zone>> zp_res;
+            int time_scope_begin, time_scope_end;
+            double prev_fv;
+
+            if(time_vec.size()!=0){
+                time_scope_begin = time_vec[0];
+                time_scope_end   = time_vec[time_vec.size()-1];
+
+                if(label_intervals.size()==1){
+                    time_scope_begin = label_intervals[0].first;
+                    time_scope_end   = label_intervals[0].second;
+                }
+
+                prev_fv = atof(fvec[0].c_str());
+            }
+
+
+
+            for(int i=0; i<time_vec.size(); i++){
+                if(i==0){
+                    continue;
+                }
+
+                double current_fv = atof(fvec[i].c_str());
+
+                if ( (time_scope_begin <= time_vec[i]) &&  (time_vec[i] <= time_scope_end) ){
+                    zone<int> ztemp = zone<int>::make_from_period_both_anchor(time_vec[i],
+                            time_vec[i]);
+                    parambox<double> pbtemp = parambox_global;
+
+                    int edge_index = $1;
+                    int comp_index = $3;
+
+                    double neg_prev_fv = - prev_fv;
+                    double neg_current_fv = - current_fv;
+
+                    if(edge_index == 1){
+                        if(comp_index == 1){
+                            pbtemp = parambox<double>::add_lower_bound_on_parameter(pbtemp,
+                            neg_prev_fv, 0, $5);
+                            pbtemp = parambox<double>::add_upper_bound_on_parameter(pbtemp,
+                            neg_current_fv, 1, $5);
+                        }else if(comp_index == 3){
+                            pbtemp = parambox<double>::add_lower_bound_on_parameter(pbtemp,
+                            neg_current_fv, 1, $5);
+                            pbtemp = parambox<double>::add_upper_bound_on_parameter(pbtemp,
+                            neg_prev_fv, 0, $5);
+                        }
+                    }else if(edge_index == 0){
+                        if(comp_index == 1){
+                            pbtemp = parambox<double>::add_lower_bound_on_parameter(pbtemp,
+                            neg_current_fv, 0, $5);
+                            pbtemp = parambox<double>::add_upper_bound_on_parameter(pbtemp,
+                            neg_prev_fv, 1, $5);
+                        }else if(comp_index == 3){
+                            pbtemp = parambox<double>::add_lower_bound_on_parameter(pbtemp,
+                            neg_prev_fv, 1, $5);
+                            pbtemp = parambox<double>::add_upper_bound_on_parameter(pbtemp,
+                            neg_current_fv, 0, $5);
+                        }
+                    }
+
+                    zp_res.push_back(make_shared<zone_parambox<int,double>>(ztemp,
+                        pbtemp));
+                }
 
                 prev_fv = current_fv;
             }
