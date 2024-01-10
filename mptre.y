@@ -656,19 +656,29 @@ int main(int argc, char** argv) {
         } while(!feof(yyin));
     }
 
+    // Do parametric identification here
+    Pointset_Powerset<ppl_ratbox> pos_param_set;
+    Pointset_Powerset<ppl_ratbox> neg_param_set;
+    Pointset_Powerset<ppl_ratbox> solution_set;
+    if(argc > 4){
+        pos_param_set =
+            positive_example_param_identification(argv[1], pos_labels, num_params);
+        neg_param_set =
+            negative_example_param_identification(argv[1], neg_labels, num_params);
+        solution_set = pos_param_set;
+        solution_set.difference_assign(neg_param_set);
+    }
+
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<milliseconds>(stop-start);
+    cout<<"time: "<<duration.count()<<" ms"<<endl;
+
     // Print the parametric match set
     if(argc == 4){
         print_mag_param_match_set(mptre_stack[0]);
     }
 
-    // Do parametric identification here
     if(argc > 4){
-        Pointset_Powerset<ppl_ratbox> pos_param_set =
-            positive_example_param_identification(argv[1], pos_labels, num_params);
-        Pointset_Powerset<ppl_ratbox> neg_param_set =
-            negative_example_param_identification(argv[1], neg_labels, num_params);
-        Pointset_Powerset<ppl_ratbox> solution_set = pos_param_set;
-        solution_set.difference_assign(neg_param_set);
         cout<<"Positive param set is:"<<endl;
         cout<<pos_param_set<<endl;
         cout<<"Positive param set size: "<<pos_param_set.size()<<endl;
@@ -679,6 +689,7 @@ int main(int argc, char** argv) {
         cout<<solution_set<<endl;
         cout<<"Solution set size:"<<solution_set.size()<<endl;
     }
+
 	return 0;
 }
 

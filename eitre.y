@@ -219,36 +219,44 @@ int main(int argc, char** argv) {
 	} while(!feof(yyin));
 
     // Do parametric identification here
-    map<pair<int,int>, vector<parambox<int>>> pos_pi_map, neg_pi_map;
-    create_param_identification_map(pos_labels, pos_pi_map, eitre_stack.back());
-    create_param_identification_map(neg_labels, neg_pi_map, eitre_stack.back());
+    int pos_success, neg_success;
     Pointset_Powerset<ppl_intbox> pos_param_set, neg_param_set;
-    int pos_success = positive_example_param_identification(pos_pi_map, pos_param_set);
-    int neg_success = negative_example_param_identification(neg_pi_map, neg_param_set);
-    if(pos_success == 1){
-        cout<<"positive param set is:"<<endl;
-        cout<<pos_param_set<<endl;
-    }else{
-        cout<<"positive param set is empty."<<endl;
-    }
-    if(neg_success == 1){
-        cout<<"negative param set is:"<<endl;
-        cout<<neg_param_set<<endl;
-    }else{
-        cout<<"negative param set is empty."<<endl;
-    }
-    if(pos_success and neg_success){
-        cout<<"solution set is:"<<endl;
-        Pointset_Powerset<ppl_intbox> solution_set = pos_param_set;
-        solution_set.difference_assign(neg_param_set);
-        cout<<solution_set<<endl;
+    if(argc > 4){
+        map<pair<int,int>, vector<parambox<int>>> pos_pi_map, neg_pi_map;
+        create_param_identification_map(pos_labels, pos_pi_map, eitre_stack.back());
+        create_param_identification_map(neg_labels, neg_pi_map, eitre_stack.back());
+        pos_success = positive_example_param_identification(pos_pi_map, pos_param_set);
+        neg_success = negative_example_param_identification(neg_pi_map, neg_param_set);
     }
 
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<milliseconds>(stop-start);
     cout<<"time: "<<duration.count()<<" ms"<<endl;
 
+    // Print the results here.
     print_interval_relations(eitre_stack.back());
+
+    if(argc > 4){
+        if(pos_success == 1){
+            cout<<"positive param set is:"<<endl;
+            cout<<pos_param_set<<endl;
+        }else{
+            cout<<"positive param set is empty."<<endl;
+        }
+        if(neg_success == 1){
+            cout<<"negative param set is:"<<endl;
+            cout<<neg_param_set<<endl;
+        }else{
+            cout<<"negative param set is empty."<<endl;
+        }
+        if(pos_success and neg_success){
+            cout<<"solution set is:"<<endl;
+            Pointset_Powerset<ppl_intbox> solution_set = pos_param_set;
+            solution_set.difference_assign(neg_param_set);
+            cout<<solution_set<<endl;
+        }
+    }
+
 	return 0;
 }
 
