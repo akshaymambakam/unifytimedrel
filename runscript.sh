@@ -6,6 +6,7 @@ g++ test_box.cpp -lgmp -lgmpxx
 ./mptre neg_porv.ptre real_signal.csv 3
 ./mptre porv.ptre real_signal.csv 3 porv_pos.txt porv_neg.txt
 ./mptre neg_porv.ptre real_signal.csv 3 porv_pos.txt porv_neg.txt
+./mptre edge_porv.ptre test_edge_porv.csv 2
 ./mptre paramecg.ptre debugTest.csv 3 pos_ecg.txt neg_ecg.txt
 # MPTRE Scalability test 1
 ./mptre mpscaletest2.ptre debugTest.csv 2 pos_ecg.txt neg_ecg.txt >logmpscale2

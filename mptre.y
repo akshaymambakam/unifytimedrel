@@ -321,7 +321,7 @@ porv: X_STRING compop magconst {
             mptre_stack.push_back(zp_res);
       }
       | edgeop X_STRING compop P_STRING {
-            vector<string> fvec = value_vec[$1];
+            vector<string> fvec = value_vec[$2];
             vector<shared_ptr<gen_zone>> zp_res;
             int time_scope_begin, time_scope_end;
             double prev_fv;
@@ -381,8 +381,11 @@ porv: X_STRING compop magconst {
                         }
                     }
 
-                    zp_res.push_back(make_shared<zone_parambox<int,double>>(ztemp,
-                        pbtemp));
+                    shared_ptr<zone_parambox<int,double>> zpt =
+                        make_shared<zone_parambox<int,double>>(ztemp,pbtemp);
+                    if(zpt->is_nonempty()){
+                        zp_res.push_back(zpt);
+                    }
                 }  
 
                 prev_fv = current_fv;
@@ -391,7 +394,7 @@ porv: X_STRING compop magconst {
             mptre_stack.push_back(zp_res);
       }
       | edgeop X_STRING compop T_MINUS P_STRING {
-            vector<string> fvec = value_vec[$1];
+            vector<string> fvec = value_vec[$2];
             vector<shared_ptr<gen_zone>> zp_res;
             int time_scope_begin, time_scope_end;
             double prev_fv;
@@ -454,8 +457,11 @@ porv: X_STRING compop magconst {
                         }
                     }
 
-                    zp_res.push_back(make_shared<zone_parambox<int,double>>(ztemp,
-                        pbtemp));
+                    shared_ptr<zone_parambox<int,double>> zpt =
+                        make_shared<zone_parambox<int,double>>(ztemp,pbtemp);
+                    if(zpt->is_nonempty()){
+                        zp_res.push_back(zpt);
+                    }
                 }
 
                 prev_fv = current_fv;
