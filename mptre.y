@@ -211,7 +211,11 @@ ptre: T_EPS {
                 );
                 parambox<double> pbtemp = zpptemp->get_sub_parambox();
 
-                zp_res.push_back(make_shared<zone_parambox<int,double>>(ztemp, pbtemp));
+                shared_ptr<zone_parambox<int,double>> zpt =
+                    make_shared<zone_parambox<int,double>>(ztemp,pbtemp);
+                if(zpt->is_nonempty()){
+                    zp_res.push_back(zpt);
+                }
             }
 
             mptre_stack.push_back(zp_res);
