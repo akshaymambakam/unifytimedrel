@@ -42,6 +42,7 @@ p[0-9]+        {
 ")"		{return T_RIGHT;}
 "!"     {return T_NOT;}
 "EPS"   {return T_EPS;}
+"true"  {return T_TRUE;}
 "+@"    {yylval.ival = 1; return T_RISE;}
 "-@"     {yylval.ival = 0; return T_FALL;}
 

@@ -55,7 +55,7 @@ void yyerror(const char* s);
 %token<ival> GEQ GE LEQ LE
 %token K_PLUS T_MINUS T_NOT T_LEFT T_RIGHT
 %token T_SLEFT T_SRIGHT
-%token T_EPS
+%token T_EPS T_TRUE
 %token<ival> T_RISE T_FALL
 %token T_AND T_OR T_SEQCOMP
 %left T_PLUS T_MINUS
@@ -99,6 +99,16 @@ ptre: T_EPS {
             vector<shared_ptr<gen_zone>> zp_res;
             zone<int> ztemp = 
                     zone<int>::make_from({0, miv, 0, miv, 0, 0},
+                        {1,1,1,1,1,1});
+            zp_res.push_back(make_shared<zone_parambox<int,double>>(ztemp,
+            parambox_global));
+            mptre_stack.push_back(zp_res);
+      }
+      | T_TRUE{
+            vector<shared_ptr<gen_zone>> zp_res;
+            int end_sig_time = time_vec[time_vec.size()-1];
+            zone<int> ztemp =
+                    zone<int>::make_from({0, end_sig_time, 0, end_sig_time, 0, end_sig_time},
                         {1,1,1,1,1,1});
             zp_res.push_back(make_shared<zone_parambox<int,double>>(ztemp,
             parambox_global));
