@@ -222,7 +222,7 @@ ptre: T_EPS {
       }
 ;
 
-compop: GEQ| LEQ;
+compop: GEQ| LEQ | LE | GE;
 edgeop: T_RISE | T_FALL;
 
 porv: X_STRING compop magconst {
@@ -280,8 +280,13 @@ porv: X_STRING compop magconst {
                 }else if(mxflag == 1){
                     pbtemp = parambox<double>::add_lower_bound_on_parameter(pbtemp,
                         zd_res[i].second, 1, $3);
+                }else if(mxflag == 4){
+                    pbtemp = parambox<double>::add_upper_bound_on_parameter(pbtemp,
+                        zd_res[i].second, 0, $3);
+                }else if(mxflag == 2){
+                    pbtemp = parambox<double>::add_lower_bound_on_parameter(pbtemp,
+                        zd_res[i].second, 0, $3);
                 }else{
-                    // TODO: "<" and ">" not yet added.
                     cout<<"Comparison operator not yet supported!"<<endl;
                     exit(0);
                 }

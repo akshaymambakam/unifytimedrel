@@ -215,12 +215,12 @@ vector<pair<zone<int>,double>> param_porv_to_zone(vector<int> timeVec, vector<st
             mxValue = atof(fvec[i].c_str());
         }else{
             double currValue = atof(fvec[i].c_str());
-            if(mxFlag == 3){
+            if(mxFlag == 3 || mxFlag == 4){
                 if(currValue < mxValue){
                     mxValue = currValue;
                     mxIndex = i;
                 }
-            }else if(mxFlag == 1){
+            }else if(mxFlag == 1 || mxFlag == 2){
                 if(currValue > mxValue){
                     mxValue = currValue;
                     mxIndex = i;
