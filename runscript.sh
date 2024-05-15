@@ -10,6 +10,7 @@ g++ test_box.cpp -lgmp -lgmpxx
 ./mptre temperature_switch.ptre temperature_data.csv 2
 ./mptre ecgpeak.ptre debugTest.csv 1
 ./mptre ecgedge.ptre debugTest 3
+./mptre ecglocal.ptre debugTest.csv 3
 ./mptre paramecg.ptre debugTest.csv 3 pos_ecg.txt neg_ecg.txt
 # MPTRE Scalability test 1
 ./mptre mpscaletest2.ptre debugTest.csv 2 pos_ecg.txt neg_ecg.txt >logmpscale2
