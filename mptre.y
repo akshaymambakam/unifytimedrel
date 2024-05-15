@@ -218,6 +218,7 @@ ptre: T_EPS {
                 }
             }
 
+            std::sort(zp_res.begin(), zp_res.end(), paramtimedrel::earlier_bmin());
             mptre_stack.push_back(zp_res);
       }
 ;
