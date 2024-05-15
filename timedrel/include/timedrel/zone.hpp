@@ -236,6 +236,60 @@ public:
 
     }
 
+    static zone_type left_conditional(const zone_type& z1, const zone_type& z2){
+
+        return make(
+
+            lower_bound_type::intersection(
+                z2.get_bmin(),
+                lower_bound_type::intersection(
+                    z1.get_emin(),
+                    lower_bound_type::add(z1.get_bmin(), z1.get_dmin())
+                    )
+            ),
+
+            upper_bound_type::intersection(
+                z2.get_bmax(),
+                upper_bound_type::intersection(
+                    z1.get_emax(),
+                    upper_bound_type::add(z1.get_bmax(), z1.get_dmax())
+                    )
+            ),
+            z2.get_emin(),
+            z2.get_emax(),
+            z2.get_dmin(),
+            z2.get_dmax()
+        );
+
+    }
+
+    static zone_type right_conditional(const zone_type& z1, const zone_type& z2){
+
+        return make(
+
+            z1.get_bmin(),
+            z1.get_bmax(),
+            lower_bound_type::intersection(
+                z1.get_emin(),
+                lower_bound_type::intersection(
+                    z2.get_bmin(),
+                    lower_bound_type::add(z2.get_emin(), z2.get_dmax())
+                    )
+            ),
+
+            upper_bound_type::intersection(
+                z1.get_emax(),
+                upper_bound_type::intersection(
+                    z2.get_bmax(),
+                    upper_bound_type::add(z2.get_emax(), z2.get_dmin())
+                    )
+            ),
+            z1.get_dmin(),
+            z1.get_dmax()
+        );
+
+    }
+
     static zone_type intersection(const zone_type& z1, const zone_type& z2){
 
         return make(lower_bound_type::intersection(z1.bmin, z2.bmin),
