@@ -230,6 +230,11 @@ vector<pair<zone<int>,double>> param_porv_to_zone(vector<int> timeVec, vector<st
         }
     }
 
+    /* BUG:
+    Use {1,1,1,1,0,1} to make edge predicates written using conditional operators work.
+     i.e. (+@ x >= c) = (x < c)?EPS$(x >= c) generates spurious matches when using {1,1,1,1,1,1}.
+     In the match-set for x <> c enforce the constraint t < t' to eliminate spurious matches.
+    */
     zone<int> ztemp = zone<int>::make_from({timeVec[begin], timeVec[mxIndex+1], 
                         timeVec[mxIndex], timeVec[end+1], 0, timeVec[end+1]-timeVec[begin]},
                         {1,1,1,1,1,1});
