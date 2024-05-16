@@ -18,6 +18,10 @@ class gen_zone {
     virtual std::shared_ptr<gen_zone> clone() = 0;
     virtual std::shared_ptr<gen_zone> intersection(const std::shared_ptr<gen_zone> &gz) = 0;
     virtual std::shared_ptr<gen_zone> concatenation(const std::shared_ptr<gen_zone> &gz) = 0;
+#ifdef ENABLE_CONDITIONAL
+    virtual std::shared_ptr<gen_zone> left_conditional(const std::shared_ptr<gen_zone> &gz) = 0;
+    virtual std::shared_ptr<gen_zone> right_conditional(const std::shared_ptr<gen_zone> &gz) = 0;
+#endif
     virtual bool is_nonempty() = 0;
 };
 

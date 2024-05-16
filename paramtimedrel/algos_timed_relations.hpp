@@ -421,6 +421,324 @@ static std::vector<std::shared_ptr<gen_zone>> gen_concatenation(const std::vecto
     return result;
 }
 
+#ifdef ENABLE_CONDITIONAL
+
+static std::vector<std::shared_ptr<gen_zone>> gen_left_conditional(const std::vector<std::shared_ptr<gen_zone>> &_zs1, 
+    const std::vector<std::shared_ptr<gen_zone>> &zs2){
+
+    std::vector<std::shared_ptr<gen_zone>> result;
+
+    std::vector<std::shared_ptr<gen_zone>> act_1, act_2, act_r, act_r_temp;
+
+    // Could be better?
+    std::vector<std::shared_ptr<gen_zone>> zs1;
+    for(auto zs1t : _zs1){
+        zs1.push_back(zs1t->clone());
+    }    
+
+    std::sort(zs1.begin(), zs1.end(), earlier_emin());
+    // std::sort(zs2.begin(), zs2.end(), earlier_bmin<value_type>());
+
+    auto it1 = zs1.cbegin();
+    auto it2 = zs2.cbegin();
+
+    while(it1 != zs1.cend() and it2 != zs2.cend()) {
+
+        if ((*it1)->compare_less_emin_bmin(*it2)){
+            act_1.push_back(*it1);
+            act_2.erase(std::remove_if(act_2.begin(), act_2.end(), 
+                [&](std::shared_ptr<gen_zone> z2){return z2->compare_less_bmax_emin(*it1);}), act_2.end());
+
+            for(const auto& z2 : act_2){
+
+                auto kid = (*it1)->left_conditional(z2);
+
+                if( kid->is_nonempty() and 
+                    !std::any_of(act_r.begin(), act_r.end(), 
+                        [&kid](std::shared_ptr<gen_zone> &zr){return zr->includes(kid);}))
+                {
+                    act_r.erase( std::remove_if(act_r.begin(), act_r.end(), 
+                        [&kid](std::shared_ptr<gen_zone> &zr){return kid->includes(zr);}), act_r.end());
+                    act_r.push_back(kid);
+
+                    act_r_temp.clear();
+                    for(auto zr : act_r){
+                        if(zr->compare_less_bmax_bmin(*it1)){
+                            result.push_back(zr->clone());
+                        }
+                        else {
+                            act_r_temp.push_back(zr);
+                        }
+                    }
+                    act_r = act_r_temp;
+                }
+            }
+
+            it1++;
+
+        } else {
+
+            act_2.push_back(*it2);
+            act_1.erase(std::remove_if(act_1.begin(), act_1.end(), 
+                [&](std::shared_ptr<gen_zone> z1){return z1->compare_less_emax_bmin(*it2);}), act_1.end()); // remove if z1.emax < z2.bmin
+
+            for(const auto& z1 : act_1){
+
+                auto kid = z1->left_conditional(*it2);
+
+                if( kid->is_nonempty() and 
+                    !std::any_of(act_r.begin(), act_r.end(), 
+                        [&kid](std::shared_ptr<gen_zone> &zr){return zr->includes(kid);}))
+                {
+                    act_r.erase( std::remove_if(act_r.begin(), act_r.end(), 
+                        [&kid](std::shared_ptr<gen_zone> &zr){return kid->includes(zr);}), act_r.end());
+                    act_r.push_back(kid);
+
+                    act_r_temp.clear();
+                    for(auto zr : act_r){
+                        if(zr->compare_less_bmax_bmin(*it2)){
+                            result.push_back(zr->clone());
+                        }
+                        else {
+                            act_r_temp.push_back(zr);
+                        }
+                    }
+                    act_r = act_r_temp;
+                }
+            }
+
+            it2++;
+        }
+    }
+
+    /// Processing left-overs (if zs1 remains)
+    while(it1 != zs1.cend()){
+        act_2.erase(std::remove_if(act_2.begin(), act_2.end(), 
+            [&](std::shared_ptr<gen_zone> z2){return z2->compare_less_bmax_bmin(*it1);}), act_2.end());
+
+        for(const auto& z2 : act_2){
+            auto kid = (*it1)->left_conditional(z2);
+
+            if( kid->is_nonempty() and 
+                !std::any_of(act_r.begin(), act_r.end(), 
+                    [&kid](std::shared_ptr<gen_zone> &zr){return zr->includes(kid);}))
+            {
+                act_r.erase( std::remove_if(act_r.begin(), act_r.end(), 
+                    [&kid](std::shared_ptr<gen_zone> &zr){return kid->includes(zr);}), act_r.end());
+                act_r.push_back(kid);
+
+                act_r_temp.clear();
+                for(const auto& zr : act_r){
+                    if(zr->compare_less_bmax_bmin(*it1)){
+                        result.push_back(zr->clone());
+                    }
+                    else {
+                        act_r_temp.push_back(zr);
+                    }
+                }
+                act_r = act_r_temp;
+            }
+        }
+        it1++;
+    }
+
+    /// Processing left-overs (if zs2 remains)
+    while(it2 != zs2.cend()){
+        act_1.erase(std::remove_if(act_1.begin(), act_1.end(), 
+        [&](std::shared_ptr<gen_zone> z1){return z1->compare_less_emax_bmin(*it2);}), act_1.end()); // remove if z1.emax < z2.bmin
+
+        for(const auto& z1 : act_1){
+            auto kid = z1->left_conditional(*it2);
+
+            if( kid->is_nonempty() and 
+                !std::any_of(act_r.begin(), act_r.end(), 
+                    [&kid](std::shared_ptr<gen_zone> &zr){return zr->includes(kid);}))
+            {
+                act_r.erase( std::remove_if(act_r.begin(), act_r.end(), 
+                    [&kid](std::shared_ptr<gen_zone> &zr){return kid->includes(zr);}), act_r.end());
+                act_r.push_back(kid);
+
+                act_r_temp.clear();
+                for(const auto& zr : act_r){
+                    if(zr->compare_less_bmax_bmin(*it2)){
+                        result.push_back(zr->clone());
+                    }
+                    else {
+                        act_r_temp.push_back(zr);
+                    }
+                }
+                act_r = act_r_temp;
+            }
+        }
+        it2++;
+    }
+    for(const auto& zr : act_r){
+        result.push_back(zr->clone());
+    }
+
+    std::sort(result.begin(), result.end(), earlier_bmin());
+    return result;
+}
+
+static std::vector<std::shared_ptr<gen_zone>> gen_right_conditional(const std::vector<std::shared_ptr<gen_zone>> &_zs1, 
+    const std::vector<std::shared_ptr<gen_zone>> &zs2){
+
+    std::vector<std::shared_ptr<gen_zone>> result;
+
+    std::vector<std::shared_ptr<gen_zone>> act_1, act_2, act_r, act_r_temp;
+
+    // Could be better?
+    std::vector<std::shared_ptr<gen_zone>> zs1;
+    for(auto zs1t : _zs1){
+        zs1.push_back(zs1t->clone());
+    }    
+
+    std::sort(zs1.begin(), zs1.end(), earlier_emin());
+    // std::sort(zs2.begin(), zs2.end(), earlier_bmin<value_type>());
+
+    auto it1 = zs1.cbegin();
+    auto it2 = zs2.cbegin();
+
+    while(it1 != zs1.cend() and it2 != zs2.cend()) {
+
+        if ((*it1)->compare_less_emin_bmin(*it2)){
+            act_1.push_back(*it1);
+            act_2.erase(std::remove_if(act_2.begin(), act_2.end(), 
+                [&](std::shared_ptr<gen_zone> z2){return z2->compare_less_bmax_emin(*it1);}), act_2.end());
+
+            for(const auto& z2 : act_2){
+
+                auto kid = (*it1)->right_conditional(z2);
+
+                if( kid->is_nonempty() and 
+                    !std::any_of(act_r.begin(), act_r.end(), 
+                        [&kid](std::shared_ptr<gen_zone> &zr){return zr->includes(kid);}))
+                {
+                    act_r.erase( std::remove_if(act_r.begin(), act_r.end(), 
+                        [&kid](std::shared_ptr<gen_zone> &zr){return kid->includes(zr);}), act_r.end());
+                    act_r.push_back(kid);
+
+                    act_r_temp.clear();
+                    for(auto zr : act_r){
+                        if(zr->compare_less_bmax_bmin(*it1)){
+                            result.push_back(zr->clone());
+                        }
+                        else {
+                            act_r_temp.push_back(zr);
+                        }
+                    }
+                    act_r = act_r_temp;
+                }
+            }
+
+            it1++;
+
+        } else {
+
+            act_2.push_back(*it2);
+            act_1.erase(std::remove_if(act_1.begin(), act_1.end(), 
+                [&](std::shared_ptr<gen_zone> z1){return z1->compare_less_emax_bmin(*it2);}), act_1.end()); // remove if z1.emax < z2.bmin
+
+            for(const auto& z1 : act_1){
+
+                auto kid = z1->right_conditional(*it2);
+
+                if( kid->is_nonempty() and 
+                    !std::any_of(act_r.begin(), act_r.end(), 
+                        [&kid](std::shared_ptr<gen_zone> &zr){return zr->includes(kid);}))
+                {
+                    act_r.erase( std::remove_if(act_r.begin(), act_r.end(), 
+                        [&kid](std::shared_ptr<gen_zone> &zr){return kid->includes(zr);}), act_r.end());
+                    act_r.push_back(kid);
+
+                    act_r_temp.clear();
+                    for(auto zr : act_r){
+                        if(zr->compare_less_bmax_bmin(*it2)){
+                            result.push_back(zr->clone());
+                        }
+                        else {
+                            act_r_temp.push_back(zr);
+                        }
+                    }
+                    act_r = act_r_temp;
+                }
+            }
+
+            it2++;
+        }
+    }
+
+    /// Processing left-overs (if zs1 remains)
+    while(it1 != zs1.cend()){
+        act_2.erase(std::remove_if(act_2.begin(), act_2.end(), 
+            [&](std::shared_ptr<gen_zone> z2){return z2->compare_less_bmax_bmin(*it1);}), act_2.end());
+
+        for(const auto& z2 : act_2){
+            auto kid = (*it1)->right_conditional(z2);
+
+            if( kid->is_nonempty() and 
+                !std::any_of(act_r.begin(), act_r.end(), 
+                    [&kid](std::shared_ptr<gen_zone> &zr){return zr->includes(kid);}))
+            {
+                act_r.erase( std::remove_if(act_r.begin(), act_r.end(), 
+                    [&kid](std::shared_ptr<gen_zone> &zr){return kid->includes(zr);}), act_r.end());
+                act_r.push_back(kid);
+
+                act_r_temp.clear();
+                for(const auto& zr : act_r){
+                    if(zr->compare_less_bmax_bmin(*it1)){
+                        result.push_back(zr->clone());
+                    }
+                    else {
+                        act_r_temp.push_back(zr);
+                    }
+                }
+                act_r = act_r_temp;
+            }
+        }
+        it1++;
+    }
+
+    /// Processing left-overs (if zs2 remains)
+    while(it2 != zs2.cend()){
+        act_1.erase(std::remove_if(act_1.begin(), act_1.end(), 
+        [&](std::shared_ptr<gen_zone> z1){return z1->compare_less_emax_bmin(*it2);}), act_1.end()); // remove if z1.emax < z2.bmin
+
+        for(const auto& z1 : act_1){
+            auto kid = z1->right_conditional(*it2);
+
+            if( kid->is_nonempty() and 
+                !std::any_of(act_r.begin(), act_r.end(), 
+                    [&kid](std::shared_ptr<gen_zone> &zr){return zr->includes(kid);}))
+            {
+                act_r.erase( std::remove_if(act_r.begin(), act_r.end(), 
+                    [&kid](std::shared_ptr<gen_zone> &zr){return kid->includes(zr);}), act_r.end());
+                act_r.push_back(kid);
+
+                act_r_temp.clear();
+                for(const auto& zr : act_r){
+                    if(zr->compare_less_bmax_bmin(*it2)){
+                        result.push_back(zr->clone());
+                    }
+                    else {
+                        act_r_temp.push_back(zr);
+                    }
+                }
+                act_r = act_r_temp;
+            }
+        }
+        it2++;
+    }
+    for(const auto& zr : act_r){
+        result.push_back(zr->clone());
+    }
+
+    std::sort(result.begin(), result.end(), earlier_bmin());
+    return result;
+}
+
+#endif
+
 // TODO: Might be wrong. We are only copying pointers not new zones.
 // TODO: Clone copying needed?
 // Might be correct if used in transitive closure

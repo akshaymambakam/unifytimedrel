@@ -75,6 +75,20 @@ friend std::ostream& operator<<(std::ostream &os, const zone_parambox<T3,T4>&);
         parambox<T2> pbres = parambox<T2>::intersection(this->get_sub_parambox(), zpb->get_sub_parambox());
         return std::make_shared<zone_parambox<T1,T2>>(zres, pbres);
     }
+#ifdef ENABLE_CONDITIONAL
+    virtual std::shared_ptr<gen_zone> left_conditional(const std::shared_ptr<gen_zone> &gz){
+        std::shared_ptr<zone_parambox<T1,T2>> zpb = std::dynamic_pointer_cast<zone_parambox<T1,T2>>(gz);
+        zone<T1> zres = zone<T1>::left_conditional(this->get_sub_zone(), zpb->get_sub_zone());
+        parambox<T2> pbres = parambox<T2>::intersection(this->get_sub_parambox(), zpb->get_sub_parambox());
+        return std::make_shared<zone_parambox<T1,T2>>(zres, pbres);
+    }
+    virtual std::shared_ptr<gen_zone> right_conditional(const std::shared_ptr<gen_zone> &gz){
+        std::shared_ptr<zone_parambox<T1,T2>> zpb = std::dynamic_pointer_cast<zone_parambox<T1,T2>>(gz);
+        zone<T1> zres = zone<T1>::right_conditional(this->get_sub_zone(), zpb->get_sub_zone());
+        parambox<T2> pbres = parambox<T2>::intersection(this->get_sub_parambox(), zpb->get_sub_parambox());
+        return std::make_shared<zone_parambox<T1,T2>>(zres, pbres);
+    }
+#endif
     virtual bool is_nonempty(){
     	return ((this->get_sub_zone()).is_nonempty() and (this->get_sub_parambox()).is_nonempty());
     }

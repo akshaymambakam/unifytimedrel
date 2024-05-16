@@ -8,6 +8,7 @@
 #include <ppl.hh>
 #include <gmpxx.h>
 
+#define ENABLE_CONDITIONAL 1
 
 using namespace Parma_Polyhedra_Library;
 using namespace Parma_Polyhedra_Library::IO_Operators;
@@ -57,7 +58,7 @@ void yyerror(const char* s);
 %token T_SLEFT T_SRIGHT
 %token T_EPS T_TRUE
 %token<ival> T_RISE T_FALL
-%token T_AND T_OR T_SEQCOMP
+%token T_AND T_OR T_SEQCOMP T_LEFT_CONDITIONAL T_RIGHT_CONDITIONAL
 %left T_PLUS T_MINUS
 
 %type<ival> compop edgeop
@@ -164,6 +165,30 @@ ptre: T_EPS {
             
             vector<shared_ptr<gen_zone>> zp_res = 
                 gen_concatenation(imp1, imp2);
+            mptre_stack.push_back(zp_res);
+      }
+      | ptre T_LEFT_CONDITIONAL ptre{
+            vector<shared_ptr<gen_zone>> imp1, imp2;
+
+            imp2 = mptre_stack.back();
+            mptre_stack.pop_back();
+            imp1 = mptre_stack.back();
+            mptre_stack.pop_back();
+
+            vector<shared_ptr<gen_zone>> zp_res =
+                gen_left_conditional(imp1, imp2);
+            mptre_stack.push_back(zp_res);
+      }
+      | ptre T_RIGHT_CONDITIONAL ptre{
+            vector<shared_ptr<gen_zone>> imp1, imp2;
+
+            imp2 = mptre_stack.back();
+            mptre_stack.pop_back();
+            imp1 = mptre_stack.back();
+            mptre_stack.pop_back();
+
+            vector<shared_ptr<gen_zone>> zp_res =
+                gen_right_conditional(imp1, imp2);
             mptre_stack.push_back(zp_res);
       }
       | ptre T_AND ptre{

@@ -36,6 +36,8 @@ p[0-9]+        {
 "&"    {return T_AND;}
 "|"    {return T_OR;}
 "%"    {return T_SEQCOMP;}
+"?"    {return T_LEFT_CONDITIONAL;}
+"$"    {return T_RIGHT_CONDITIONAL;}
 "["    {return T_SLEFT;}
 "]"    {return T_SRIGHT;}
 "("		{return T_LEFT;}
