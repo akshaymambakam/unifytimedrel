@@ -30,3 +30,6 @@ g++ test_box.cpp -lgmp -lgmpxx
 ./eitre escaletest3.ptre testBlowup.csv 3 >logest3
 ./eitre escaletest5.ptre testBlowup.csv 5 >logest5
 ./eitre escaletest7.ptre testBlowup.csv 7 >logest7
+# Parametric Event-Based Timed Regular Expressions (complete semantics)
+./pebtre ecgtrigeminy.ptre ecg106_seq.txt 4
+./pebtre ebasedloop.ptre testBlowup.csv 3
