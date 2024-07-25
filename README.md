@@ -54,6 +54,13 @@ A more detailed user guide for the tool can be found in:
 mptre_guide.txt
 ```
 
+## Using the PEBTRE tool
+The PEBTRE tool implements full semantics PTPM for Parametric Event-Based Timed Regular Expressions. By full semantics we mean that we do not require the start of a match to be exactly when events happen. You can run PEBTRE on an example we gave using the following command:
+```
+./pebtre ecgtrigeminy.ptre ecg106_seq.txt 4
+```
+In the above command: 'ecgtrigeminy.ptre' contains the PTRE, 'ecg106_seq.txt' the timed word, and the third argument is the number of parameters.
+
 ## Authors and acknowledgment
 This tool builds on the work that was done at the VERIMAG laboratory located in the Grenoble city of France. This work is built on top of the theory of Timed Pattern Matching (TPM) developed by [Dogan Ulus](https://www.cmpe.boun.edu.tr/tr/people/dogan.ulus). Check out his [github page](https://github.com/doganulus). Timed Pattern Matching has been implemented in [montre](https://github.com/doganulus/montre) and [timedrel](https://github.com/doganulus/timedrel).
 
