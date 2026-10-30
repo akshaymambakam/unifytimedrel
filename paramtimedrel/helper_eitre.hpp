@@ -63,6 +63,9 @@ vector<timed_interval<int>> eps_to_timed_intervals(vector<int> timeVec,
     
     for(int i=0;i<timeVec.size();i++){
         if(prevts == timeVec[i]){
+            /**
+             * BUG: Use the def M(eps, w) = {(t,t): t\in {t_0,...,t_n}}
+             **/
             pair<int,int> tp(prevts, timeVec[i]);
             timed_interval<int> tival(tp);
             tivalvec.push_back(tival);

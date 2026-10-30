@@ -13,6 +13,10 @@
 #ifndef ALGOS_INTERVAL_RELATIONS_HPP
 #define ALGOS_INTERVAL_RELATIONS_HPP 1
 
+/**
+ * TODO:? Revamp using ordered and unordered multimaps?
+ **/
+
 namespace paramtimedrel {
 
 struct {
@@ -143,6 +147,9 @@ std::vector<std::shared_ptr<compound_interval>> concatenation_interval_relations
     return civres;
 }
 
+/**
+ * TODO: Can be improved using multimaps?
+ **/
 int contained_interval_relations(std::vector<std::shared_ptr<compound_interval>> &civnew,
     std::vector<std::shared_ptr<compound_interval>> &civold){
     

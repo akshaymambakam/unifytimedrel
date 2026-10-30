@@ -19,11 +19,19 @@ using namespace Parma_Polyhedra_Library::IO_Operators;
 
 namespace paramtimedrel {
 
+/**
+ * TODO:? Multiple inheritance from compound_interval and timed_interval
+ * We can possibly remove gen_interval if the above is successful
+ **/
 template <class T1>
 class parametric_interval: public compound_interval{
     timed_interval<T1> sub_timed_interval = timed_interval<T1>::make(0,0);
     C_Polyhedron sub_poly;
 
+    /**
+     * TODO:
+     * Add a bool flag to support both PEBTRE type and PETRE type and distinguish
+     **/
 template<typename T3>
 friend std::ostream& operator<<(std::ostream &os, const parametric_interval<T3>&);
 
@@ -125,6 +133,11 @@ friend std::ostream& operator<<(std::ostream &os, const parametric_interval<T3>&
         pt.intersection_assign(pi->get_sub_poly());
         return std::make_shared<parametric_interval<T1>>(sub_timed_interval, pt);
     }
+    /**
+     * TODO:
+     * This supports the PEBTRE definition but not PETRE definition
+     * Add support also to PETRE definition
+     **/
     virtual std::shared_ptr<compound_interval> concatenation(const std::shared_ptr<compound_interval> &gz){
         std::shared_ptr<parametric_interval<T1>> pi = std::dynamic_pointer_cast<parametric_interval<T1>>(gz);
         std::pair<T1,T1> a = sub_timed_interval.get_time_interval_as_pair();

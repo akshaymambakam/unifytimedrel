@@ -172,6 +172,9 @@ vector<zone<int>> bool_to_zone(vector<int> timeVec,
         int fvectemp = removeDot(fvec[i]);
         if(fvectemp==1-prevOneIn){
             if(prevOne == prevOneIn){
+                /**
+                 * BUG: Use make_from_period instead.
+                **/
                 zone<int> ztemp = 
                     zone<int>::make_from({ztstart, ztend, ztstart, ztend, 0, ztend-ztstart},
                         {1,1,1,1,1,1});
@@ -192,6 +195,9 @@ vector<zone<int>> bool_to_zone(vector<int> timeVec,
         }
     }
     if(prevOne == prevOneIn){
+        /**
+         * BUG: Use make_from_period instead.
+        **/
         zone<int> ztemp = 
                     zone<int>::make_from({ztstart, ztend, ztstart, ztend, 0, ztend-ztstart},
                         {1,1,1,1,1,1});
@@ -229,6 +235,10 @@ vector<pair<zone<int>,double>> param_porv_to_zone(vector<int> timeVec, vector<st
             
         }
     }
+
+    /**
+     * Use Eugene's Lesbesgueisque definition instead?
+    **/
 
     /* BUG:
     Use {1,1,1,1,0,1} to make edge predicates written using conditional operators work.
